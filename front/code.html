@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Loup Garou</title>
+    <link rel = "stylesheet" href = "style.css">
+</head>
+<body class="body_code">
+    <header>
+        <h1>LOUP GAROU</h1>
+    </header>
+    <main class="main_code">
+        <div class="div_titre">
+            <h2 class="titre_impoute">Code</h2>
+        </div>
+        <form class="form_inp_code" id="forme_code">
+          <input type="tel" onkeypress="imputNumber(event)" name="code" id="code" onkeydown="handleKeyPress(event)">
+            <input type="button" class="div boutton code" id="input_submit" value="Rejondre la partie">
+        </form>
+    </main>
+<script src="js/verif code.js"></script>
+<script>
+  function imputNumber(evt){
+      var ch = String.fromCharCode(evt.which)
+      if (!(/[0-9]/.test(ch))){
+          evt.preventDefault()
+      }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Loup Garou</title>
+    <link rel=”stylesheet” href=”https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css”>
+    <link rel = "stylesheet" href = "style.css">
+</head>
+<body class="body_maind">
+    <header class="header_maind">
+        <h1>LOUP GAROU</h1>
+    </header>
+    <div class="cart">
+      <img class="cart_img" src="file:///C:/Users/Rapha%C3%ABl/Documents/code/html/LGV2/img/carte/do.svg">
+    </div>
+    <div class="joure">
+      <div class="joure_div">
+        <div class="persones" id = "persones">
+          <div class="persone" id = "persone">
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="chat">
+      <div class="nave_chat">
+        <nav class="nave">
+          <div class="div_text_nave div_text_nave_chat">
+              <p class="text_nave text_nave_chat soulinier">chat</p>
+          </div>
+          <div class="div_text_nave div_text_nave_role">
+            <p class="text_nave text_nave_role">roles</p>
+          </div>
+        </nav>
+        <div class="div_chate div_chate_role actife_role_chat">
+            <div class="chate" id="message_container">
+            </div>
+            <div class="form_chate">
+              <input type="text" onkeydown="handleKeyPress_for_seed_messaage(event)" placeholder="message" class="input_message" name="message_input"><br>
+              <input type="submit" class="bontton-message" name="message_dutton">
+            </div>
+        </div>
+        <div class="div_roles roles div_chate_role"id ="roles">
+
+        </div>
+      </div>
+    </div>
+    <div class="div_temps">
+      <div>
+        <p class="temps_text">1:20</p>
+      </div>
+      <footer class="footer_ind">
+          <p class="texte_footer">code: <span class="text_code">212df</span></p>
+          <img class="img_footer" id="boton_open" src="img/logo.svg">
+      </footer>
+    </div>
+    <dialog class="Popup" id="dialog">
+        <div class="contenair">
+        <div class="body_popup">
+            <p class="titre_popup">Partager</p>
+            <img src="img/crois.svg" class="img_quite" id="boton_close">
+            <div class="contener_img_partages">
+                <img class="img_partage" id="bottun_copier"  src="img/copy.svg">
+                <img class="img_partage img_mail" src="img/mail.svg" >
+                <img class="img_partage img_WhatsApp" src="img/WhatsApp.svg">
+            </div>
+        </div>
+        </div>
+    </dialog>
+    <dialog class="Popup dialog-sor" id="dialog-sor">
+        <div class="contenair">
+        <div class="body_popup">
+            <p class="titre_popup"><span class="joure_mort nom">joure</span> est mort</p>
+            <div class="contener_img_partages">
+                <img class="img_partage" id="sauver" src="img/téléchargé.jpeg">
+                <img class="img_partage" id="rien" src="img/téléchargé3.png">
+                <img class="img_partage" id= "tuer" src="img/téléchargé2.png">
+            </div>
+        </div>
+        </div>
+    </dialog>
+    <dialog class="Popup dialog_rejouer" id="dialog">
+        <div class="contenair">
+        <div class="body_popup">
+            <p class="titre_popup">rejouer</p>
+            <div class="contener_img_partages">
+                <img class="img_rejouer" src="img/images.png">
+            </div>
+        </div>
+        </div>
+    </dialog>
+    <script src="js/chat.js"></script>
+    <script src="js/partage.js"></script>
+    <script type="application/javascript" src="js/clanent.js"></script>
+    <script type="application/javascript" src="js/clanent_main.js"></script>
+</body>
+</html>
