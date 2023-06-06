@@ -3,7 +3,7 @@ from websocket import create_connection
 import json
 from flask_cors import CORS
 import random
-ip = "192.168.1.15"
+ip = "192.168.66.108"
 
 def rechet():#récuper les var du wedsocket
     ws = create_connection("ws://"+ip+":12345/")

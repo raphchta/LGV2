@@ -29,7 +29,7 @@ function $_GET(param) {
 document.addEventListener('DOMContentLoaded',function(){
     var code_p = $_GET()["code"];
     var sedo = getCookie('jouer');
-    var ip = "192.168.1.15";
+    var ip = "192.168.66.108";
     const delay = (delayInms) => {
       return new Promise(resolve => setTimeout(resolve, delayInms));
     }
@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded',function(){
     const dialog_sor = document.querySelector(".dialog-sor");
     const dialog_rejouer= document.querySelector(".dialog_rejouer");
     const text_time= document.querySelector(".temps_text");
+    const dialog_if= document.querySelector(".dialog-in");
     const messagescontaner = document.querySelector("#message_container")
     const bouton_sover = document.querySelector("#sauver");
     const bouton_rien = document.querySelector("#rien");
@@ -46,6 +47,7 @@ document.addEventListener('DOMContentLoaded',function(){
     const bouton_tuer = document.querySelector("#tuer");
     var int_etape = -1;
     var int_etape_e = -1;
+    var if_oppen = 0
     var role = "";
     var elemnt = "";
     var dialog_rejouer_ouver = 0
@@ -62,7 +64,7 @@ document.addEventListener('DOMContentLoaded',function(){
       const obj = JSON.parse(message.data);
       int_etape = obj['eta'];
       console.log(message.data);
-      if (role === "sorcière" && int_etape === 5 && sorciere_ouver == 0){
+      if (role === "sorcière" && int_etape === 6 && sorciere_ouver == 0){
         try {
             sorciere_ouver = 1
             dialog_sor.showModal();
@@ -70,8 +72,29 @@ document.addEventListener('DOMContentLoaded',function(){
             console.log(e);
         }
       }
-      if (int_etape != 5 && sorciere_ouver == 1){
+      if (int_etape != 6 && sorciere_ouver == 1){
         sorciere_ouver = 0
+        try {
+          dialog_sor.close("animalNotChosen");
+        } catch (e) {
+          console.log(e);
+        }
+      }
+      if (role === "Infect Père des Loups" && int_etape === 5 && if_oppen == 0){
+        try {
+            if_oppen = 1
+            dialog_if.showModal();
+        } catch (e) {
+            console.log(e);
+        }
+      }
+      if (int_etape != 5 && if_oppen == 1){
+        if_oppen = 0
+        try {
+          dialog_if.close("animalNotChosen");
+        } catch (e) {
+          console.log(e);
+        }
       }
       var roles = obj['roles'];
       var jouers = obj['jouers'];
@@ -122,23 +145,23 @@ document.addEventListener('DOMContentLoaded',function(){
             var dico = {"jouer":jouer};
             websocketClient_main.send(JSON.stringify(dico));
           }
-          else if (role === "loup-garou" && int_etape === 4){
+          else if (lg.includes(sedo) && int_etape === 4){
             var dico = {"jouer":jouer};
             websocketClient_main.send(JSON.stringify(dico));
           }
-          else if (role === "sorcière" && int_etape === 5){
+          else if (role === "sorcière" && int_etape === 6){
             var dico = {"jouer":jouer,"action":1};
             websocketClient_main.send(JSON.stringify(dico));
           }
-          else if (role === "assassin" && int_etape === 6){
-            var dico = {"jouer":jouer};
-            websocketClient_main.send(JSON.stringify(dico));
-          }
-          else if (int_etape === 7){
+          else if (role === "assassin" && int_etape === 7){
             var dico = {"jouer":jouer};
             websocketClient_main.send(JSON.stringify(dico));
           }
           else if (int_etape === 8){
+            var dico = {"jouer":jouer};
+            websocketClient_main.send(JSON.stringify(dico));
+          }
+          else if (int_etape === 9){
             var dico = {"jouer":jouer};
             websocketClient_main.send(JSON.stringify(dico));
           }
@@ -153,6 +176,16 @@ document.addEventListener('DOMContentLoaded',function(){
           dico = {"action":2}
           websocketClient_main.send(JSON.stringify(dico));
           dialog_sor.close("animalNotChosen");
+      });
+      document.querySelector(".inf").addEventListener('click', function(e){
+          dico = {"action":1}
+          websocketClient_main.send(JSON.stringify(dico));
+          document.querySelector(".joure_mort_if").close("animalNotChosen");
+      });
+      document.querySelector(".rien_in").addEventListener('click', function(e){
+          dico = {"action":0}
+          websocketClient_main.send(JSON.stringify(dico));
+          document.querySelector(".joure_mort_if").close("animalNotChosen");
       });
       bouton_rien.addEventListener('click', function(e){
           dico = {"action":0}
@@ -169,7 +202,10 @@ document.addEventListener('DOMContentLoaded',function(){
         role = obj["role"];
         couple = obj["couple"]
         lg = obj['lg']
-        joure_mort = obj["mort"]
+        joure_mort_so = obj["mort"]
+        joure_mort_if = obj["mort_if"]
+        text_mort = document.querySelector(".joure_mort_if");
+        text_mort.innerHTML = joure_mort_if;
         time = obj["temps"]
         pop = obj["pop"]
         if( typeof pop != "undefined"){
@@ -193,8 +229,8 @@ document.addEventListener('DOMContentLoaded',function(){
         else {
           text_time.style.display = "none";
         }
-        text_mort = document.querySelector(".joure_mort");
-        text_mort.innerHTML = joure_mort;
+        text_mort = document.querySelector(".joure_mort_so");
+        text_mort.innerHTML = joure_mort_so;
         if( typeof role != "undefined"){
           var text = "img/carte/"+role+'.svg';
           document.querySelector(".cart_img").src=text;

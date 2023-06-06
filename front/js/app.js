@@ -5,6 +5,7 @@ const content = document.querySelector(".affichage_role_choisi")
 var dico_roles = {
     "cupidon":0,
     "petite-fille":0,
+    "Infect Père des Loups":0,
     "sorcière":0,
     "prostituée":0,
     "voyante":0,
@@ -30,6 +31,13 @@ document.querySelector(".ico_bouffon").addEventListener('click', function myFunc
   document.querySelector(class_de_cart_a).classList.remove("active");
   document.querySelector(".img_bouffon").classList.add("active");
   class_de_cart_a = ".img_bouffon"
+}
+})
+document.querySelector(".ico_Infect_Père_des_Loups").addEventListener('click', function myFunction() {
+  if (class_de_cart_a !=".img_Infect_Père_des_Loups"){
+  document.querySelector(class_de_cart_a).classList.remove("active");
+  document.querySelector(".img_Infect_Père_des_Loups").classList.add("active");
+  class_de_cart_a = ".img_Infect_Père_des_Loups"
 }
 })
 document.querySelector(".ico_cupidon").addEventListener('click', function myFunction() {
@@ -186,7 +194,7 @@ if (cart_atuelle =="villageois"){
     span_v.innerHTML = dico_roles["villageois"];
   }
 }});
-document.querySelector(".crere").addEventListener('click', function myFunction() {
+document.querySelector(".crere_par").addEventListener('click', function myFunction() {
   fetch('http://127.0.0.1:5000/certe?roles='+encodeURIComponent(JSON.stringify(dico_roles)))
   .then(response => response.json())
   .then(data => {

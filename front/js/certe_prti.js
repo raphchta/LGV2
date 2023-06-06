@@ -4,6 +4,7 @@ input_submit.addEventListener('click', function myFunction() {
     var dico_roles = {
         "cupidon":0,
         "petite-fille":0,
+        
         "sorcière":0,
         "prostituée":0,
         "voyante":0,
@@ -13,6 +14,9 @@ input_submit.addEventListener('click', function myFunction() {
         "loup-garou":0,
         "villageois":0,
     };
+  if (true == document.querySelector(".cupidon").checked){
+    dico_roles["cupidon"] = 1;
+  }
   if (true == document.querySelector(".cupidon").checked){
     dico_roles["cupidon"] = 1;
   }
