@@ -29,7 +29,7 @@ function $_GET(param) {
 document.addEventListener('DOMContentLoaded',function(){
     var code_p = $_GET()["code"];
     var sedo = getCookie('jouer');
-    var ip = "192.168.66.108";
+    var ip = "192.168.1.15";
     const delay = (delayInms) => {
       return new Promise(resolve => setTimeout(resolve, delayInms));
     }
@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded',function(){
       const obj = JSON.parse(message.data);
       int_etape = obj['eta'];
       console.log(message.data);
-      if (role === "sorcière" && int_etape === 6 && sorciere_ouver == 0){
+      if (role === "sorcière" && int_etape === 7 && sorciere_ouver == 0){
         try {
             sorciere_ouver = 1
             dialog_sor.showModal();
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded',function(){
             console.log(e);
         }
       }
-      if (int_etape != 6 && sorciere_ouver == 1){
+      if (int_etape != 7 && sorciere_ouver == 1){
         sorciere_ouver = 0
         try {
           dialog_sor.close("animalNotChosen");
@@ -149,19 +149,23 @@ document.addEventListener('DOMContentLoaded',function(){
             var dico = {"jouer":jouer};
             websocketClient_main.send(JSON.stringify(dico));
           }
-          else if (role === "sorcière" && int_etape === 6){
-            var dico = {"jouer":jouer,"action":1};
-            websocketClient_main.send(JSON.stringify(dico));
-          }
-          else if (role === "assassin" && int_etape === 7){
+          else if (role === "Loup-garou blanc" && int_etape === 6){
             var dico = {"jouer":jouer};
             websocketClient_main.send(JSON.stringify(dico));
           }
-          else if (int_etape === 8){
+          else if (role === "sorcière" && int_etape === 7){
+            var dico = {"jouer":jouer,"action":1};
+            websocketClient_main.send(JSON.stringify(dico));
+          }
+          else if (role === "assassin" && int_etape === 8){
             var dico = {"jouer":jouer};
             websocketClient_main.send(JSON.stringify(dico));
           }
           else if (int_etape === 9){
+            var dico = {"jouer":jouer};
+            websocketClient_main.send(JSON.stringify(dico));
+          }
+          else if (int_etape === 10){
             var dico = {"jouer":jouer};
             websocketClient_main.send(JSON.stringify(dico));
           }

@@ -6,6 +6,7 @@ var dico_roles = {
     "cupidon":0,
     "petite-fille":0,
     "Infect Père des Loups":0,
+    "loup-garou blanc":0,
     "sorcière":0,
     "prostituée":0,
     "voyante":0,
@@ -38,6 +39,13 @@ document.querySelector(".ico_Infect_Père_des_Loups").addEventListener('click', 
   document.querySelector(class_de_cart_a).classList.remove("active");
   document.querySelector(".img_Infect_Père_des_Loups").classList.add("active");
   class_de_cart_a = ".img_Infect_Père_des_Loups"
+}
+})
+document.querySelector(".ico_loup-garou_blanc").addEventListener('click', function myFunction() {
+  if (class_de_cart_a !=".img_loup-garou_blanc"){
+  document.querySelector(class_de_cart_a).classList.remove("active");
+  document.querySelector(".img_loup-garou_blanc").classList.add("active");
+  class_de_cart_a = ".img_loup-garou_blanc"
 }
 })
 document.querySelector(".ico_cupidon").addEventListener('click', function myFunction() {

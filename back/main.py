@@ -6,10 +6,9 @@ import time
 all_clients = []
 codes_nom = {}
 dico_code_partie = {}
-ip = "192.168.66.108"
-"""
-inf -> 
-"""
+ip = "192.168.1.15"
+def delet_parti(code):
+    dico_code_partie.pop(code)
 class parte:
     def __init__(self,code: str,liste_roles: list):# code de parti, liste des role ->
         print(liste_roles)
@@ -26,7 +25,7 @@ class parte:
         self.list_mort = []
         self.list_couple = []
         self.dico_jouer_lg = {}
-        self.list_roles_lg = ["loup-garou","Infect Père des Loups"]
+        self.list_roles_lg = ["loup-garou","Loup-garou blanc","Infect Père des Loups"]
         self.str_prosetuer = ""
         self.str_sedo_jouer_infeter = ""
         self.list_qui_vote = []
@@ -37,7 +36,9 @@ class parte:
         self.lies_popo = [1,1]# [popo de vie,popo de mort]
         self.str_a_qui_de_jour = "cupidon"
         self.str_der_joure = "vilage"
-        self.dico_nume_role = {-1:'pascomencer',1:"cupidon",2:'prostituée',3:"voyante",4:"loup-garou",5:"Infect Père des Loups",6:"sorcière",7:"assassin",8: "maire",9: "kill"}
+        self.dico_nume_role = {-1:'pascomencer',1:"cupidon",2:'prostituée',3:"voyante",4:"loup-garou",5:"Infect Père des Loups",6:"Loup-garou blanc",7:"sorcière",8:"assassin",9: "maire",10: "kill"}
+        self.dico_role_nume = {'pascomencer': -1, 'cupidon': 1, 'prostituée': 2, 'voyante': 3, 'loup-garou': 4, 'Infect Père des Loups': 5, 'Loup-garou blanc': 6, 'sorcière': 7, 'assassin': 8, 'maire': 9, 'kill': 10}
+
     async def ristras(self):
         #self.code = code
         #self.list_roles = liste_roles
@@ -50,7 +51,7 @@ class parte:
         self.list_mort = []
         self.list_couple = []
         self.dico_jouer_lg = {}
-        self.list_roles_lg = ["loup-garou","Infect Père des Loups"]
+        self.list_roles_lg = ["loup-garou","Loup-garou blanc","Infect Père des Loups"]
         self.str_sedo_jouer_infeter = str
         self.str_prosetuer = ""
         self.float_temps_rest = float
@@ -128,28 +129,28 @@ class parte:
                     else:
                         couple = []
                     dico = {"role": role, "lg": lg, "couple": couple}
-                    if self.dico_nume_role[self.int_etape] == role or self.int_etape == 7 or self.int_etape == 8 or role in self.list_roles_lg and self.int_etape == 4:
+                    if self.dico_nume_role[self.int_etape] == role or self.int_etape == self.dico_role_nume["maire"] or self.int_etape == self.dico_role_nume["kill"] or role in self.list_roles_lg and self.int_etape == self.dico_role_nume["loup-garou"]:
                         named_tuple = time.localtime()
                         time_float = float(self.truncate(float(time.strftime("%M.%S", named_tuple)),2))
                         self.float_temps_rest = float(self.truncate(float(self.float_temps_fin) - float(time_float),2))
                         dico["temps"] = self.float_temps_rest
                         if self.float_temps_rest <= 0:
-                            if self.int_etape == 4:
+                            if self.int_etape == self.dico_role_nume["loup-garou"]:
                                 await self.fin_lG(iftime=0)
-                            elif self.int_etape == 7:
+                            elif self.int_etape == self.dico_role_nume["maire"]:
                                 await self.fin_election(iftime=0)
-                            elif self.int_etape == 8:
+                            elif self.int_etape == self.dico_role_nume["kill"]:
                                 await self.fin_vote(iftime=0)
                             else:
                                 self.str_a_qui_de_jour = self.dico_nume_role[self.int_etape+1]
                                 await self.a_qui_de_jour()
-                    if role == "Infect Père des Loups" and self.int_etape == 5:
+                    if role == "Infect Père des Loups" and self.int_etape == self.dico_role_nume["Infect Père des Loups"]:
                         if self.str_vote_lg != "":
                             dico["mort_if"] = self.str_vote_lg
                         else:
                             dico['mort_if'] = "personne n'"
 
-                    if role == "sorcière" and self.int_etape == 6:
+                    if role == "sorcière" and self.int_etape == self.dico_role_nume["sorcière"]:
                         if self.str_vote_lg != "":
                             dico['mort'] = self.str_vote_lg
                         else:
@@ -174,38 +175,42 @@ class parte:
                         continue
                     messages = json.loads(new_message)
                     jouer = list(self.dico_jouer_role.keys())
-                    if self.int_etape == 1 and role == "cupidon":
+                    if self.int_etape == self.dico_role_nume["cupidon"] and role == "cupidon":
                         if messages["jouer1"] in jouer and messages["jouer2"] in jouer:
                             await self.cupidon(messages["jouer1"],messages["jouer2"])
-                    elif self.int_etape == 2 and role == "prostituée":
+                    elif self.int_etape == self.dico_role_nume["prostituée"] and role == "prostituée":
                         if messages["jouer"] in jouer:
                             await self.prostituee(messages["jouer"])
-                    elif self.int_etape == 3 and role == "voyante":
+                    elif self.int_etape == self.dico_role_nume["voyante"] and role == "voyante":
                         if messages["jouer"] in jouer:
                             await self.voyante(messages["jouer"])
-                    elif self.int_etape == 4 and jouer_moi in list(self.dico_jouer_lg.keys()):
+                    elif self.int_etape == self.dico_role_nume["loup-garou"] and jouer_moi in list(self.dico_jouer_lg.keys()):
                         if messages["jouer"] in jouer:
                             await  self.loup_garou(messages["jouer"])
-                    elif self.int_etape == 5 and role == 'Infect Père des Loups':
+                    elif self.int_etape == self.dico_role_nume['Infect Père des Loups'] and role == 'Infect Père des Loups':
                         if messages ["action"] == 1:
                             await self.Infect_pere_des_Loups()
                         else:
                             await self.mp("tu na rien fait.", jouer_moi)
                             self.str_a_qui_de_jour = "sorcière"
                             await self.a_qui_de_jour()
-                    elif self.int_etape == 6 and role == 'sorcière':
+                    elif self.int_etape == self.dico_role_nume['Loup-garou blanc'] and role == 'Loup-garou blanc':
+                        if messages["jouer"] in jouer:
+                            await self.loup_garou_blanc(messages["jouer"])
+
+                    elif self.int_etape == self.dico_role_nume["sorcière"] and role == 'sorcière':
                         if messages ["action"] == 1:
                             if "jouer" in messages:
                                 await self.sorciere(messages["action"], messages["jouer"])
                         else:
                             await self.sorciere(messages["action"])
-                    elif self.int_etape == 7 and role == 'assassin':
+                    elif self.int_etape == self.dico_role_nume["assassin"] and role == 'assassin':
                         if messages["jouer"] in jouer:
                             await self.assassin(messages["jouer"])
-                    elif self.int_etape == 8:
+                    elif self.int_etape == self.dico_role_nume["maire"]:
                         if messages["jouer"] in jouer:
                             await self.elition(messages["jouer"],jouer_moi)
-                    elif self.int_etape == 9 :
+                    elif self.int_etape == self.dico_role_nume["kill"]:
                         if messages["jouer"] in jouer:
                             await  self.vote(messages["jouer"],jouer_moi)
 
@@ -250,46 +255,49 @@ class parte:
         else:
             roles = self.list_roles
         while 1:
-            if self.str_a_qui_de_jour in roles:
+            if self.str_a_qui_de_jour in roles or self.str_a_qui_de_jour == "loup-garou" and len(self.dico_jouer_lg) != 0:
                 if self.str_der_joure != "":
                     await self.send_message(f"La <span class='nom'>{str(self.str_der_joure)}</span> se rendort .")
                 await self.send_message(f"Le <span class='nom'>{self.str_a_qui_de_jour}</span> se réveille")
                 if self.str_a_qui_de_jour == "cupidon":
-                    self.int_etape = 1
+                    self.int_etape = self.dico_role_nume["cupidon"]
                     self.str_der_joure = self.str_a_qui_de_jour
                     await self.mp("Clique sur deux joueurs pour les mettre en couple.",self.get_jouer('cupidon'))
                     self.set_time_fin(2)
                     break
                 if self.str_a_qui_de_jour == "prostituée":
-                    self.int_etape = 2
+                    self.int_etape = self.dico_role_nume["prostituée"]
                     self.str_der_joure = self.str_a_qui_de_jour
                     await self.mp("Clique sur deux joueurs pour les mettre en couple.",self.get_jouer('prostituée'))
                     self.set_time_fin(2)
                     break
                 elif self.str_a_qui_de_jour == "voyante":
-                    self.int_etape = 3
+                    self.int_etape = self.dico_role_nume["voyante"]
                     self.str_der_joure = self.str_a_qui_de_jour
                     await self.mp("clique sur un joueur pour connaître son role.",self.get_jouer('voyante'))
                     self.set_time_fin(2)
                     break
                 elif self.str_a_qui_de_jour == "loup-garou":
-                    self.int_etape = 4
+                    self.int_etape = self.dico_role_nume["loup-garou"]
                     self.str_der_joure = self.str_a_qui_de_jour
                     await self.mp("clique sur un joueur pour le tuer.",self.get_jouer('loup-garou'))
                     self.set_time_fin(2)
                     break
                 elif self.str_a_qui_de_jour == "Infect Père des Loups":
-                    print("ddddd")
-                    self.int_etape = 5
+                    self.int_etape = self.dico_role_nume["Infect Père des Loups"]
+                    self.set_time_fin(2)
+                    break
+                if self.str_a_qui_de_jour == "Loup-garou blanc":
+                    self.int_etape = self.dico_role_nume["Loup-garou blanc"]
                     self.set_time_fin(2)
                     break
                 elif self.str_a_qui_de_jour == "sorcière":
-                    self.int_etape = 6
+                    self.int_etape = self.dico_role_nume["sorcière"]
                     self.str_der_joure = self.str_a_qui_de_jour
                     self.set_time_fin(2)
                     break
                 elif self.str_a_qui_de_jour == "assassin":
-                    self.int_etape = 7
+                    self.int_etape = self.dico_role_nume["assassin"]
                     self.str_der_joure = self.str_a_qui_de_jour
                     await self.mp("clique sur un joueur pour le tuer.",self.get_jouer('assassin'))
                     self.set_time_fin(2)
@@ -312,9 +320,12 @@ class parte:
                     if self.str_vote_lg != "" and self.str_sedo_jouer_infeter != "":
                         self.str_a_qui_de_jour = "Infect Père des Loups"
                     else:
-                        self.str_a_qui_de_jour = "sorcière"
+                        self.str_a_qui_de_jour = "Loup-garou blanc"
                     continue
                 if self.str_a_qui_de_jour == "Infect Père des Loups" :
+                    self.str_a_qui_de_jour = "Loup-garou blanc"
+                    continue
+                if self.str_a_qui_de_jour == "Loup-garou blanc":
                     self.str_a_qui_de_jour = "sorcière"
                     continue
                 if self.str_a_qui_de_jour == "sorcière":
@@ -333,23 +344,27 @@ class parte:
             fin = "<span class='nom'>" + str(k) + "</span>, "
         text.replace(fin, f"et <span class='nom'>{fin}</span>.")
         if len(role) == 0:
-            await self.send_message(f"peut probale!!!toule monde est mort")
+            await self.send_message(f"<span>peut probale!!!</span>toule monde est mort")
+            await self.ristras()
+            return 1
+        elif len(role) == 1 and role[0] == "Loup-garou blanc":
+            await self.send_message(f"<span>Le Loup-garou blanc</span> ont gagnés! Bravo à {text}.")
             await self.ristras()
             return 1
         elif len(role) == len(self.dico_jouer_lg):
-            await self.send_message(f"Les loup-garou ont gagnés! Bravo à {text}.")
+            await self.send_message(f"<span>Les loup-garou</span> ont gagnés! Bravo à {text}.")
             await self.ristras()
             return 1
         elif len(self.dico_jouer_lg) == 0 and "assassin" not in role:
-            await self.send_message(f"Le village ont gagnés! Bravo à {text}.")
+            await self.send_message(f"<span>Le village</span> ont gagnés! Bravo à {text}.")
             await self.ristras()
             return 1
         elif len(self.dico_jouer_lg) == 0 and "assassin" in role:
-            await  self.send_message(f"l'assassin a gagnés! Bravo à {self.get_jouer('assassin')}.")
+            await  self.send_message(f"<span>l'assassin</span> a gagnés! Bravo à {self.get_jouer('assassin')}.")
             await self.ristras()
             return 1
         elif len(role) == len(self.list_couple) and any(element in self.list_couple for element in list(self.dico_jouer_role.keys())):
-            await  self.send_message(f"le couple a gagnés! Bravo à {text}.")
+            await  self.send_message(f"<span>le couple</span> a gagnés! Bravo à {text}.")
             await self.ristras()
             return 1
         else:
@@ -396,11 +411,11 @@ class parte:
         if self.str_maire == "":
             await self.send_message("il est heur d'élire le maire. pour cela clique sur un jouer.")
             self.set_time_fin(5)
-            self.int_etape = 8
+            self.int_etape = self.dico_role_nume["maire"]
         else:
             await self.send_message("il est heur de voter pour tuer un joure. pour cela clique sur un jouer.")
             self.set_time_fin(5)
-            self.int_etape = 9
+            self.int_etape = self.dico_role_nume["kill"]
 
     async def cupidon(self,sedo1,sedo2):
         self.list_couple = [sedo1,sedo2]
@@ -476,7 +491,7 @@ class parte:
                 await self.send_message_lg(f"Vous avez tuer <span class='nom'>{psersone}</span>.")
             else:
                 await self.send_message_lg(f"Vous avais pas votre donc persone meure se soire.")
-            self.str_a_qui_de_jour = "sorcière"
+            self.str_a_qui_de_jour = "Loup-garou blanc"
             await self.a_qui_de_jour()
         else:
             i = 0
@@ -503,6 +518,12 @@ class parte:
         self.dico_jouer_lg[self.str_vote_lg] = self.dico_jouer_role[self.str_vote_lg]
         self.str_vote_lg = ""
         await self.send_message_lg(f"<span class='nom'>{self.str_sedo_jouer_infeter}</span> vent d'aitre inféter.")
+        self.str_a_qui_de_jour = "Loup-garou blanc"
+        await self.a_qui_de_jour()
+
+    async def loup_garou_blanc(self, jouer):
+        self.list_mort.append(jouer)
+        await self.mp(f"Tu a tuer <span class='nom'>{jouer}.</span>", self.get_jouer("Loup-garou blanc"))
         self.str_a_qui_de_jour = "sorcière"
         await self.a_qui_de_jour()
 
@@ -709,7 +730,7 @@ async def new_client_cooected(client_socket, path):#quand un client se co
             parti.dico_jouer_socket_for_message[jouer] = "c'est nule"
             list_sokter = list(parti.dico_jouer_socket_for_message.values()) + list(parti.dico_jouer_socket.values())
             if len(list_sokter) == list_sokter.count("c'est nule"):
-                dico_code_partie.pop(parti.code)
+                delet_parti(parti.code)
                 return 0
             else:
                 if list_sokter.count("c'est nule")%2 == 1:
