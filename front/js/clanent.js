@@ -37,12 +37,19 @@ document.addEventListener('DOMContentLoaded',function(){
         console.log(sedo);
     }
 
-    const websocketClient = new WebSocket("ws://"+ip+":12345/");
+    var websocketClient = new WebSocket("ws://"+ip+":12345/");
 
     const messagescontaner = document.querySelector("#message_container")
     const sendMessageButton = document.querySelector(".bontton-message")
     element = document.getElementById('message_container');//message_container
     websocketClient.onopen = function(){
+      document.querySelector(".rejoure").addEventListener('click', function(e){
+        websocketClient.send("/re");
+        document.querySelector(".rejoure").style.display = "none";
+      });
+      document.querySelector(".changer_roles").addEventListener('click', function(e){
+        document.querySelector(".changer_roles").style.display = "none";
+      });
       function seed_message_chat(){
         var stl = messageInput.value
         websocketClient.send(stl);
@@ -57,7 +64,20 @@ document.addEventListener('DOMContentLoaded',function(){
             seed_message_chat();
         };
         websocketClient.onmessage = function(messages){
-            console.log(messages.data)
+            if (messages.data === "re"){
+              document.querySelector(".temps_text").style.display = "none";
+              document.querySelector(".rejoure").style.display = "block";
+              return 0;
+            }
+            if (messages.data === "re1"){
+              document.querySelector(".changer_roles").href ="./changer.html?code=" + encodeURIComponent(code_p);
+              document.querySelector(".changer_roles").style.display = "block";
+              return 0
+            }
+            if (messages.data === '{"message": "la patri a comencer", "envoyer": "le narrateur", "styl": ""}'){
+              document.querySelector(".changer_roles").style.display = "none";
+              var websocketClient = new WebSocket("ws://"+ip+":12345/");
+            }
             const nuwMessage = document.createElement("p");
             const obj = JSON.parse(messages.data);
             message = obj["message"]

@@ -17,6 +17,12 @@ def criet_resquit(list_roles,code):#input roles : list ,code: int
     ws.send(f'$£CrIR{json.dumps(dico)}')
     return 0
 
+def changer_resquit(list_roles,code):#input roles : list ,code: int
+    ws = create_connection("ws://"+ip+":12345/")
+    dico = {"roles":list_roles, "code":code}
+    ws.send(f'$£CHarg{json.dumps(dico)}')
+    return 0
+
 app = Flask(__name__)
 CORS(app)
 
@@ -29,10 +35,18 @@ def verife_exite_partie():
     else:
         return json.dumps({'reponce':'1'})
 
+@app.route('/changer_role', methods=['get'])#input code: int (code de la partie) vérifer si la partie exite
+def changer_role_partie():
+    code_parti = request.args.get('code')
+    roles = request.args.get('roles')
+    print(roles)
+    roles = json.loads(roles)
+    return json.dumps({'reponce':changer_resquit(roles,code_parti)})
+
 @app.route('/usser', methods=['get'])#input code:int(code de la partie) jouer:str (spedo) vérifi si le spedo est prix
 def verife_usser():
     usser = request.args.get('usser')
-    if usser is None or usser == "":
+    if usser is None or usser == "" or len(usser) > 10:
         return json.dumps({'reponce': '1'})
     dico_partis = json.loads(rechet())
     code_parti = request.args.get('code')
@@ -60,12 +74,9 @@ def created():
             code = random.randint(0, 65535)
             if code not in list(dico_partis.keys()) and code != 12345:
                 break
-    print("coucou")
     if len(list_roles) == 0:
-        print("coucodddddddddu")
         return json.dumps({'reponce':'1'})
     criet_resquit(list_roles,code)
-    print("coucodddddddddqqqqqqqqqqqqqqqqqqqqqu")
     return json.dumps({'reponce':'0',"code":code})
 
 app.run(host="127.0.0.1")

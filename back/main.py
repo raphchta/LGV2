@@ -8,7 +8,11 @@ codes_nom = {}
 dico_code_partie = {}
 ip = "192.168.1.15"
 def delet_parti(code):
-    dico_code_partie.pop(code)
+
+    try:
+        dico_code_partie.pop(code)
+    except KeyError:
+        print(f"{code} déga suprimer")
 class parte:
     def __init__(self,code: str,liste_roles: list):# code de parti, liste des role ->
         print(liste_roles)
@@ -36,8 +40,8 @@ class parte:
         self.lies_popo = [1,1]# [popo de vie,popo de mort]
         self.str_a_qui_de_jour = "cupidon"
         self.str_der_joure = "vilage"
-        self.dico_nume_role = {-1:'pascomencer',1:"cupidon",2:'prostituée',3:"voyante",4:"loup-garou",5:"Infect Père des Loups",6:"Loup-garou blanc",7:"sorcière",8:"assassin",9: "maire",10: "kill"}
-        self.dico_role_nume = {'pascomencer': -1, 'cupidon': 1, 'prostituée': 2, 'voyante': 3, 'loup-garou': 4, 'Infect Père des Loups': 5, 'Loup-garou blanc': 6, 'sorcière': 7, 'assassin': 8, 'maire': 9, 'kill': 10}
+        self.dico_nume_role = {-2:'pascomencer',-1:'pascomencer',1:"cupidon",2:'prostituée',3:"voyante",4:"loup-garou",5:"Infect Père des Loups",6:"Loup-garou blanc",7:"sorcière",8:"assassin",9: "maire",10: "kill"}
+        self.dico_role_nume = {'pascomencer':-2,'pascomencer': -1, 'cupidon': 1, 'prostituée': 2, 'voyante': 3, 'loup-garou': 4, 'Infect Père des Loups': 5, 'Loup-garou blanc': 6, 'sorcière': 7, 'assassin': 8, 'maire': 9, 'kill': 10}
 
     async def ristras(self):
         #self.code = code
@@ -65,6 +69,10 @@ class parte:
         self.lies_popo = [1,1]# [popo de vie,popo de mort]
         self.str_a_qui_de_jour = "cupidon"
         self.str_der_joure = "vilage"
+        client = list(self.dico_jouer_socket_for_message.values())[0]
+        await client.send("re1")
+        await self.send("re")
+
 
     def set_time_fin(self, temps):
         named_tuple = time.localtime()  # get struct_time
@@ -84,10 +92,13 @@ class parte:
         styl = "lg"
         for k in self.dico_jouer_lg.keys():
             await self.dico_jouer_socket_for_message[k].send(json.dumps({'message':message,"envoyer":envoyer,"styl":styl}))
+
     async def send_message(self,message:str,envoyer="le narrateur",styl=""):# envois un message a tout le monde (ar: contenu du message)
         for k,client in self.dico_jouer_socket_for_message.items():
             await client.send(json.dumps({'message':message,"envoyer":envoyer,"styl":styl}))
-
+    async def send(self, message):
+        for k,client in self.dico_jouer_socket_for_message.items():
+            await client.send(message)
     async def sokcet_info(self,client_socket, path):
         if path == "/":
             while 1:
@@ -108,7 +119,7 @@ class parte:
             jouer_moi = jouers["jouer"]
             if jouer_moi in self.dico_jouer_socket.keys():
                 self.dico_jouer_socket[jouer_moi] = client_socket
-                while self.int_etape == -1:
+                while self.int_etape < 0 and jouer_moi not in self.dico_jouer_role:
                     await asyncio.sleep(1)
                 role = self.dico_jouer_role[jouer_moi]
                 await client_socket.send(json.dumps({"role":role}))
@@ -116,11 +127,9 @@ class parte:
                     try:
                         role = self.dico_jouer_role[jouer_moi]
                     except KeyError:
-                        while self.int_etape == -1:
-                            await asyncio.sleep(1)
-                        role = self.dico_jouer_role[jouer_moi]
-                        await client_socket.send(json.dumps({"role": role}))
-                    if role in self.list_roles_lg:
+                        await asyncio.sleep(1)
+                        continue
+                    if jouer_moi in self.dico_jouer_lg:
                         lg = list(self.dico_jouer_lg.keys())
                     else:
                         lg = []
@@ -165,7 +174,7 @@ class parte:
                         list_sokter = list(self.dico_jouer_socket_for_message.values()) + list(
                             self.dico_jouer_socket.values())
                         if len(list_sokter) == list_sokter.count("c'est nule"):
-                            dico_code_partie.pop(self.code)
+                            delet_parti(self.code)
                             return 0
                         else:
                             if list_sokter.count("c'est nule") % 2 == 1:
@@ -213,6 +222,9 @@ class parte:
                     elif self.int_etape == self.dico_role_nume["kill"]:
                         if messages["jouer"] in jouer:
                             await  self.vote(messages["jouer"],jouer_moi)
+            else:
+                await client_socket.send("ops")
+                return 0
 
     def get_jouer(self,role: str):
         for k,y in self.dico_jouer_role.items():
@@ -233,6 +245,7 @@ class parte:
             await self.star()
 
     async def star(self):#lance la parti
+        self.int_etape = -2
         await asyncio.sleep(2)
         roles = self.list_roles.copy()
         for joure in self.dico_jouer_socket.keys():
@@ -245,7 +258,6 @@ class parte:
         if "mercenaire" in self.list_roles:
             self.str_sible = random.choice(list(self.dico_jouer_role.keys()))
             await self.mp(f"ta cible et <span class='nom'>{self.str_sible}</span>",self.get_jouer('mercenaire'))
-        self.int_etape=-2
         await self.a_qui_de_jour()
 
     async def a_qui_de_jour(self):
@@ -280,7 +292,7 @@ class parte:
                 elif self.str_a_qui_de_jour == "loup-garou":
                     self.int_etape = self.dico_role_nume["loup-garou"]
                     self.str_der_joure = self.str_a_qui_de_jour
-                    await self.mp("clique sur un joueur pour le tuer.",self.get_jouer('loup-garou'))
+                    await self.send_message_lg("clique sur un joueur pour le tuer.")
                     self.set_time_fin(2)
                     break
                 elif self.str_a_qui_de_jour == "Infect Père des Loups":
@@ -340,9 +352,10 @@ class parte:
         text = ''
         fin = ''
         for k in self.dico_jouer_role.keys():
-            text += "<span class='nom'>" + str(k) + "</span>, "
-            fin = "<span class='nom'>" + str(k) + "</span>, "
-        text.replace(fin, f"et <span class='nom'>{fin}</span>.")
+            if fin != '':
+                text += fin + ","
+            fin = "<span class='nom'>" + str(k) + "</span>"
+        text = text[:-1] + " est " + fin
         if len(role) == 0:
             await self.send_message(f"<span>peut probale!!!</span>toule monde est mort")
             await self.ristras()
@@ -355,11 +368,11 @@ class parte:
             await self.send_message(f"<span>Les loup-garou</span> ont gagnés! Bravo à {text}.")
             await self.ristras()
             return 1
-        elif len(self.dico_jouer_lg) == 0 and "assassin" not in role:
+        elif len(self.dico_jouer_lg) == 0 and "assassin" not in role and "bouffon" not in role and "mercenaire" not in role and "loup-garou blanc" not in role:
             await self.send_message(f"<span>Le village</span> ont gagnés! Bravo à {text}.")
             await self.ristras()
             return 1
-        elif len(self.dico_jouer_lg) == 0 and "assassin" in role:
+        elif len(self.dico_jouer_lg) == 0 and "assassin" in role and len(role) == 1:
             await  self.send_message(f"<span>l'assassin</span> a gagnés! Bravo à {self.get_jouer('assassin')}.")
             await self.ristras()
             return 1
@@ -369,13 +382,14 @@ class parte:
             return 1
         else:
             return 0
+
     async def kill(self):
         if len(self.list_mort)==0:
             await self.send_message(f"persone est mort pend la nuit.")
             return
         unique_sweets = []
         for sweet in self.list_mort:
-            if sweet not in unique_sweets:
+            if sweet not in unique_sweets and sweet in self.dico_jouer_role:
                 unique_sweets.append(sweet)
         self.list_mort = unique_sweets
         for mort in self.list_mort:
@@ -385,29 +399,52 @@ class parte:
             if mort == self.str_maire:
                 self.str_maire = ""
             if mort == self.str_prosetuer:
-                self.dico_jouer_role.pop(mort)
+                self.str_prosetuer = ""
                 continue
-            elif mort in self.list_couple:
+            if mort in self.list_couple:
                 self.list_couple.remove(mort)
                 await self.send_message(f"{mort} est mort,il était <span class='nom'>{role}</span>,par ammoure <span class='nom'>{self.list_couple[0]}</span> est mort il était <span class='nom'>{self.dico_jouer_role[self.list_couple[0]]}</span>")
                 if self.list_couple[0] in self.list_mort:
                     self.list_mort.remove(self.list_couple[0])
-                self.dico_jouer_role.pop(self.list_couple[0])
+                if self.list_couple[0] in list(self.dico_jouer_lg.keys()):
+                    self.dico_jouer_lg.pop(self.list_couple[0])
+                if self.dico_jouer_role[self.list_couple[0]] == "prostituée":
+                    await self.send_message(
+                        f"<span class='nom'>{self.list_couple[0]}</span> il était <span class='nom'>{role}</span> Malheureusement <span class='nom'>{self.str_prosetuer}</span> été au mauvais endroit au mauvais moment il est donc mort il était <span class='nom'>{self.dico_jouer_role[self.str_prosetuer]}</span>.")
+                    self.dico_jouer_role.pop(self.list_couple[0])
+                    if self.str_prosetuer in list(self.dico_jouer_lg.keys()):
+                        self.dico_jouer_lg.pop(self.str_prosetuer)
+                    if self.str_prosetuer == self.str_maire:
+                        self.str_maire = ""
+                    if self.str_prosetuer in list(self.dico_jouer_lg.keys()):
+                        self.dico_jouer_lg.pop(self.str_prosetuer)
+                    self.dico_jouer_role.pop(self.str_prosetuer)
+                else:
+                    self.dico_jouer_role.pop(self.list_couple[0])
                 self.dico_jouer_role.pop(mort)
                 self.list_couple = []
-            elif role == "prostituée":
+            if role == "prostituée":
                 await self.send_message(f"<span class='nom'>{mort}</span> il était <span class='nom'>{role}</span> Malheureusement <span class='nom'>{self.str_prosetuer}</span> été au mauvais endroit au mauvais moment il est donc mort il était <span class='nom'>{self.dico_jouer_role[self.str_prosetuer]}</span>.")
-                self.dico_jouer_role.pop(mort)
+                try:
+                    self.dico_jouer_role.pop(mort)
+                except KeyError:
+                    pass
                 self.dico_jouer_role.pop(self.str_prosetuer)
+                if self.str_prosetuer in list(self.dico_jouer_lg.keys()):
+                    self.dico_jouer_lg.pop(self.str_prosetuer)
+                if self.str_prosetuer == self.str_maire:
+                    self.str_maire = ""
             else:
-                self.dico_jouer_role.pop(mort)
+                if mort in self.dico_jouer_role:
+                    self.dico_jouer_role.pop(mort)
                 await self.send_message(f"<span class='nom'>{mort}</span> est mort,il était <span class='nom'>{role}</span>.")
+        await asyncio.sleep(0.1)
         return await self.get_vitori()
 
     async def matain(self):
-        print("coucou c'est le matain")
         if await self.kill():
             return 0
+        self.str_prosetuer = ""
         if self.str_maire == "":
             await self.send_message("il est heur d'élire le maire. pour cela clique sur un jouer.")
             self.set_time_fin(5)
@@ -571,7 +608,7 @@ class parte:
             self.dico_vote = {}
             self.list_qui_vote = []
             self.set_time_fin(5)
-            self.int_etape = 8
+            self.int_etape = self.dico_role_nume["kill"]
         else:
             i = 0
             x = 0
@@ -591,7 +628,7 @@ class parte:
                 await self.send_message("il est heur de voter pour tuer un joure. pour cela clique sur un jouer.")
                 self.list_qui_vote = []
                 self.set_time_fin(5)
-                self.int_etape = 9
+                self.int_etape = self.dico_role_nume["kill"]
 
     async def vote(self,vote:str,jouer_qui_a_vote:str):
         if jouer_qui_a_vote not in self.list_qui_vote:
@@ -623,6 +660,7 @@ class parte:
                         psersone.append(k)
                 psersone = random.choice(psersone)
                 self.dico_vote = {}
+                self.list_qui_vote = []
                 if "bouffon" in list(self.dico_jouer_role.values()):
                     if psersone == self.get_jouer("bouffon"):
                         await self.send_message(f"<span class='nom'>{self.get_jouer('bouffon')}</span> a ganier en temps que bouffon")
@@ -654,6 +692,8 @@ class parte:
                 if "bouffon" in list(self.dico_jouer_role.values()):
                     self.dico_jouer_role[self.get_jouer("bouffon")] = "s-v"
                     await self.mp("tu n'es pas mort tu deviens donc simple villageois", self.get_jouer("bouffon"))
+                self.str_a_qui_de_jour = "prostituée"
+                await self.a_qui_de_jour()
         else:
             i = 0
             x = 0
@@ -695,7 +735,10 @@ class parte:
                 await self.a_qui_de_jour()
 
 async def new_client_cooected(client_socket, path):#quand un client se co
-    new_message = await client_socket.recv()
+    try:
+        new_message = await client_socket.recv()
+    except websockets.exceptions.ConnectionClosedOK:
+        return 0 
     #-----------------------------------------pour api--------------------------------------------------------
     if new_message == '$£CONN':
         await client_socket.send(str(json.dumps(codes_nom)))
@@ -708,6 +751,25 @@ async def new_client_cooected(client_socket, path):#quand un client se co
             await websockets.serve(dico_code_partie[json_parti['code']].sokcet_info,ip, json_parti['code'])
             await client_socket.send("0")
             return 0
+    if new_message[:7] == '$£CHarg':
+        json_r_c = json.loads(new_message[7:])
+        if int(json_r_c["code"]) in list(dico_code_partie.keys()):
+            if dico_code_partie[int(json_r_c["code"])].int_etape == -1:
+                list_roles = []
+                i  = 0
+                for k, y in json_r_c["roles"].items():
+                    if y != 0:
+                        i = 0
+                        while i < y:
+                            list_roles.append(k)
+                            i += 1
+                dico_code_partie[int(json_r_c["code"])].list_roles = list_roles
+                await client_socket.send("0")
+                return 0
+            else:
+                return 1
+        else:
+            return 1
     # ------------------------------------------------------------------------------------------------------
     dico = json.loads(new_message)
     if not dico['jouer'] and not dico['code']:
@@ -716,6 +778,8 @@ async def new_client_cooected(client_socket, path):#quand un client se co
     if int(dico["code"]) in dico_code_partie:
         parti = dico_code_partie[int(dico['code'])]
         if jouer in parti.dico_jouer_socket and parti.dico_jouer_socket[jouer] == "c'est nule" and parti.dico_jouer_socket_for_message[jouer] == "c'est nule":
+            parti.dico_jouer_socket_for_message[jouer] = client_socket
+        elif  jouer not in parti.dico_jouer_socket and parti.int_etape != -1:
             parti.dico_jouer_socket_for_message[jouer] = client_socket
         else:
             codes_nom[int(dico["code"])].append(jouer)
@@ -747,10 +811,10 @@ async def new_client_cooected(client_socket, path):#quand un client se co
                 parti.list_jouer_bote_pour_re.append(dico["jouer"])
                 if len(parti.list_jouer_bote_pour_re) == len(parti.dico_jouer_socket):
                     parti.list_jouer_bote_pour_re = []
-                    await parti.send_message("ca re commence !!!!")
                     await parti.star()
             else:
                 await parti.send_message(f"{jouer} tu la déga dit")
+            continue
         if new_message[:4].lower() == "/rev" and parti.int_etape == -1:
             fin = ""
             if len(parti.list_jouer_bote_pour_re) == 0:

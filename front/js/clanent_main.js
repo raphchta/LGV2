@@ -57,13 +57,18 @@ document.addEventListener('DOMContentLoaded',function(){
     var list_jouers = [];
     var couple = [];
     var element = "LOUP GAROU"
+    var roles = [];
+    var jouers = [sedo];
     var text = "ws://"+ip+":"+code_p.toString()+"/";
     console.log(text);
     const websocketClient = new WebSocket(text);
     websocketClient.onmessage = function(message){
       const obj = JSON.parse(message.data);
+      int_etape_e = int_etape
       int_etape = obj['eta'];
-      console.log(message.data);
+      if (int_etape != -1 && int_etape_e ===-1){
+        document.querySelector(".changer_roles").style.display = "none";
+      }
       if (role === "sorcière" && int_etape === 7 && sorciere_ouver == 0){
         try {
             sorciere_ouver = 1
@@ -96,8 +101,20 @@ document.addEventListener('DOMContentLoaded',function(){
           console.log(e);
         }
       }
+      if( typeof jouers == "undefined"){
+        var jouers = "";}
+      if( typeof roles == "undefined"){
+        var roles = "";}
+      if (JSON.stringify(jouers) === JSON.stringify(obj['jouers']) && JSON.stringify(roles) === JSON.stringify(obj['roles'])) {
+        return 0
+      }
       var roles = obj['roles'];
       var jouers = obj['jouers'];
+      if ((!(jouers.includes(sedo)) && int_etape > 0)){
+        document.querySelector("body").style.filter = "grayscale(80%)";
+      }else {
+        document.querySelector("body").style.filter = "grayscale(0%)";
+      }
       element = document.querySelector(".roles");
       element.innerHTML = "";
       roles.forEach((item, i) => {
@@ -122,6 +139,15 @@ document.addEventListener('DOMContentLoaded',function(){
               nuwMessage.classList.add("slete");
             }
           }
+        if (couple.includes(item)){
+          nuwMessage.classList.add("couple");
+        }
+        else if (lg.includes(item)){
+          nuwMessage.classList.add("lg");
+        }
+        else if (lg.includes(item) && couple.includes(item)) {
+          nuwMessage.classList.add("lg_couple");
+        }
         nuwMessage.classList.add("persone");
         nuwMessage.setAttribute('id',item);
         nuwMessage.onclick= function() {
@@ -201,11 +227,10 @@ document.addEventListener('DOMContentLoaded',function(){
       });
     };
     websocketClient_main.onmessage = function(message){
+        if (message.data == "ops"){
+          return 0;
+        }
         const obj = JSON.parse(message.data);
-        console.log(obj);
-        role = obj["role"];
-        couple = obj["couple"]
-        lg = obj['lg']
         joure_mort_so = obj["mort"]
         joure_mort_if = obj["mort_if"]
         text_mort = document.querySelector(".joure_mort_if");
@@ -235,21 +260,25 @@ document.addEventListener('DOMContentLoaded',function(){
         }
         text_mort = document.querySelector(".joure_mort_so");
         text_mort.innerHTML = joure_mort_so;
-        if( typeof role != "undefined"){
+        if( typeof obj["role"] != "undefined"){
+          role = obj["role"];
           var text = "img/carte/"+role+'.svg';
           document.querySelector(".cart_img").src=text;
         }
 
-        if( typeof couple != "undefined"){
-          if (couple.length == 2){
+        if( typeof obj["couple"] != "undefined"){
+          couple = obj["couple"];
+          if (couple.length >= 2){
+            couple = obj["couple"];
             elemnt = document.getElementById(couple[0]);
             elemnt.classList.add("couple");
             elemnt = document.getElementById(couple[1]);
             elemnt.classList.add("couple");
           }
         }
-        if( typeof lg != "undefined"){
-          if(lg.length != 0){
+        if( typeof obj['lg'] != "undefined"){
+          if(obj['lg'].length != 0){
+            lg = obj['lg']
             lg.forEach((item, i) => {
               elemnt = document.getElementById(lg[i]);
               elemnt.classList.add("lg");
