@@ -4,7 +4,6 @@ var conteur = 1
 
 button_chat.addEventListener("click", function() {
   if (conteur == 0){
-
     document.querySelector(".text_nave_role").classList.remove("soulinier");
     document.querySelector(".text_nave_chat").classList.add("soulinier");
     document.querySelector(".div_roles").classList.remove("actife_role_chat");

@@ -6,13 +6,12 @@ import time
 all_clients = []
 codes_nom = {}
 dico_code_partie = {}
-ip = "192.168.1.15"
+ip = "192.168.68.108"
 def delet_parti(code):
-
     try:
         dico_code_partie.pop(code)
     except KeyError:
-        print(f"{code} déga suprimer")
+        print(f"{dico_code_partie} déga suprimer")
 class parte:
     def __init__(self,code: str,liste_roles: list):# code de parti, liste des role ->
         print(liste_roles)
@@ -32,6 +31,7 @@ class parte:
         self.list_roles_lg = ["loup-garou","Loup-garou blanc","Infect Père des Loups"]
         self.str_prosetuer = ""
         self.str_sedo_jouer_infeter = ""
+        self.liste_metre_du_jeux = []
         self.list_qui_vote = []
         self.dico_vote_lg = {}
         self.str_vote_lg = ""

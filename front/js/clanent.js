@@ -15,7 +15,7 @@ function getCookie(cname) {
   return "";
 };
 document.addEventListener('DOMContentLoaded',function(){
-    var ip = "192.168.1.15";
+    var ip = "192.168.68.108";
     console.log($_GET());
     if( typeof $_GET()["code"] == "undefined"){
         document.location.href = 'code.html'

@@ -3,7 +3,7 @@ from websocket import create_connection
 import json
 from flask_cors import CORS
 import random
-ip = "192.168.1.15"
+ip = "192.168.68.108"
 
 def rechet():#récuper les var du wedsocket
     ws = create_connection("ws://"+ip+":12345/")
@@ -63,17 +63,18 @@ def created():
     roles = request.args.get('roles')
     list_roles = []
     dico_partis = json.loads(rechet())
-    code = int
+
     for k,y in json.loads(roles).items():
         if y != 0:
             i = 0
             while i < y:
                 list_roles.append(k)
                 i += 1
-        while True:
-            code = random.randint(0, 65535)
-            if code not in list(dico_partis.keys()) and code != 12345:
-                break
+    code = int
+    while True:
+        code = random.randint(0, 65535)
+        if code not in list(dico_partis.keys()) and code != 12345:
+            break
     if len(list_roles) == 0:
         return json.dumps({'reponce':'1'})
     criet_resquit(list_roles,code)

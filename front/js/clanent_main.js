@@ -29,7 +29,7 @@ function $_GET(param) {
 document.addEventListener('DOMContentLoaded',function(){
     var code_p = $_GET()["code"];
     var sedo = getCookie('jouer');
-    var ip = "192.168.1.15";
+    var ip = "192.168.68.108";
     const delay = (delayInms) => {
       return new Promise(resolve => setTimeout(resolve, delayInms));
     }
@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded',function(){
     const img_rejouer = document.querySelector(".img_rejouer");
     const bouton_tuer = document.querySelector("#tuer");
     var int_etape = -1;
+    var reserte = 0;
     var int_etape_e = -1;
     var if_oppen = 0
     var role = "";
@@ -55,10 +56,10 @@ document.addEventListener('DOMContentLoaded',function(){
     var joure_mort = "";
     var lg = [];
     var list_jouers = [];
+    var roles_avez = [];
+    var jouer_avez = [];
     var couple = [];
     var element = "LOUP GAROU"
-    var roles = [];
-    var jouers = [sedo];
     var text = "ws://"+ip+":"+code_p.toString()+"/";
     console.log(text);
     const websocketClient = new WebSocket(text);
@@ -66,6 +67,18 @@ document.addEventListener('DOMContentLoaded',function(){
       const obj = JSON.parse(message.data);
       int_etape_e = int_etape
       int_etape = obj['eta'];
+      if( typeof obj['presence'] != "undefined"){
+        if(obj['presence'] == 1){
+          element = document.querySelector("body");
+          element.innerHTML = "";
+          const nuwMessage = document.createElement("img");
+          var text = "img/carte/"+role+'.svg';
+          nuwMessage.src=text;
+          nuwMessage.classList.add("img_toto");
+          element.appendChild(nuwMessage);
+
+        }
+      }
       if (int_etape != -1 && int_etape_e ===-1){
         document.querySelector(".changer_roles").style.display = "none";
       }
@@ -105,11 +118,16 @@ document.addEventListener('DOMContentLoaded',function(){
         var jouers = "";}
       if( typeof roles == "undefined"){
         var roles = "";}
-      if (JSON.stringify(jouers) === JSON.stringify(obj['jouers']) && JSON.stringify(roles) === JSON.stringify(obj['roles'])) {
+      if (reserte == 0  || JSON.stringify(jouer_avez) === JSON.stringify(obj['jouers']) && JSON.stringify(roles_avez) === JSON.stringify(obj['roles'])) {
         return 0
       }
-      var roles = obj['roles'];
-      var jouers = obj['jouers'];
+      console.log(JSON.stringify(jouer_avez),JSON.stringify(obj['jouers']));
+      console.log(JSON.stringify(roles_avez),);
+      reserte = 0;
+      roles = obj['roles'];
+      jouers = obj['jouers'];
+      jouer_avez = obj['jouers'];
+      roles_avez = obj['roles'];
       if ((!(jouers.includes(sedo)) && int_etape > 0)){
         document.querySelector("body").style.filter = "grayscale(80%)";
       }else {
@@ -139,14 +157,17 @@ document.addEventListener('DOMContentLoaded',function(){
               nuwMessage.classList.add("slete");
             }
           }
-        if (couple.includes(item)){
+        if (lg.includes(item) && couple.includes(item)) {
+            nuwMessage.classList.add("lg_couple");
+            nuwMessage.innerHTML = nuwMessage.innerHTML + "❤️"
+        }
+        else if (couple.includes(item)){
+          const img_ceure = document.createElement("img");
           nuwMessage.classList.add("couple");
+          nuwMessage.innerHTML = nuwMessage.innerHTML + "❤️"
         }
         else if (lg.includes(item)){
           nuwMessage.classList.add("lg");
-        }
-        else if (lg.includes(item) && couple.includes(item)) {
-          nuwMessage.classList.add("lg_couple");
         }
         nuwMessage.classList.add("persone");
         nuwMessage.setAttribute('id',item);
@@ -260,14 +281,16 @@ document.addEventListener('DOMContentLoaded',function(){
         }
         text_mort = document.querySelector(".joure_mort_so");
         text_mort.innerHTML = joure_mort_so;
-        if( typeof obj["role"] != "undefined"){
+        if( typeof obj["role"] != "undefined" && role != obj["role"]){
           role = obj["role"];
+          reserte = 1;
           var text = "img/carte/"+role+'.svg';
           document.querySelector(".cart_img").src=text;
         }
 
-        if( typeof obj["couple"] != "undefined"){
+        if( typeof obj["couple"] != "undefined" && couple != obj["couple"]){
           couple = obj["couple"];
+          reserte = 1;
           if (couple.length >= 2){
             couple = obj["couple"];
             elemnt = document.getElementById(couple[0]);
@@ -276,9 +299,10 @@ document.addEventListener('DOMContentLoaded',function(){
             elemnt.classList.add("couple");
           }
         }
-        if( typeof obj['lg'] != "undefined"){
+        if( typeof obj['lg'] != "undefined" && lg!= obj['lg']){
           if(obj['lg'].length != 0){
             lg = obj['lg']
+            reserte = 1;
             lg.forEach((item, i) => {
               elemnt = document.getElementById(lg[i]);
               elemnt.classList.add("lg");

@@ -15,6 +15,7 @@ var dico_roles = {
     "mercenaire":0,
     "loup-garou":0,
     "villageois":0,
+    "presence":0,
 };
 var span_lg = ""
 var coponet_lg = []
@@ -25,6 +26,13 @@ document.querySelector(".ico_assassin").addEventListener('click', function myFun
     document.querySelector(class_de_cart_a).classList.remove("active")
     document.querySelector(".img_assassin").classList.add("active")
     class_de_cart_a = ".img_assassin"
+  }
+})
+document.querySelector(".ico_presence").addEventListener('click', function myFunction() {
+  if (class_de_cart_a !=".img_presence"){
+    document.querySelector(class_de_cart_a).classList.remove("active")
+    document.querySelector(".img_presence").classList.add("active")
+    class_de_cart_a = ".img_presence"
   }
 })
 document.querySelector(".ico_bouffon").addEventListener('click', function myFunction() {

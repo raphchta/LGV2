@@ -115,13 +115,6 @@ body{
     justify-content: space-evenly;
     align-items: stretch;
 }
-
-.titre_botton{
-    margin:auto;
-}
-.bontton_maind{
-    margin-left:10px
-}
 .boutton{
     font-size: 35px;
     border:0;
@@ -132,9 +125,6 @@ body{
     background-color:#0F0E4A;
     border-radius: 10px;
     color: #FFFFFF;
-}
-.dic_nom-role{
-    text-align: center;
 }
 .header_maind{
     display: flex;
@@ -179,12 +169,6 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-}
-.div_pcrere{
-    display:flex;
-}
-.pcrere{
-    margin:auto;
 }
 .main_maid{
     width:100%;
@@ -330,6 +314,7 @@ footer.p{
 }
 .persone{
     background-color:#5F5F5F;
+    position: relative;
 }
 .form_chate{
   display: flex;
@@ -591,6 +576,10 @@ overflow-wrap: break-word;
 }
 .lg_couple{
   background: linear-gradient(to right, #BE4141,#9B3C75);
+}
+.img_toto{
+  height: 99%;
+  width: auto;
 }
 @media(max-width:1000px){
     .main_index{
