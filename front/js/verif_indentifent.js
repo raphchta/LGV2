@@ -32,9 +32,10 @@ function verif_id(){
   fetch('http://127.0.0.1:5000/usser?code=' + code_p + '&usser=' + input_text.value)
   .then(response => response.json())
   .then(data => {
+    console.log(data);
     if (data['reponce'] ==="0"){
         document.cookie = "jouer=" + input_text.value+";";
-        document.location.href = 'page de jeur.html?code=' + code_p;
+        document.location.href = data['url'];
     } else{
         if (i == 0){
             i = 1;

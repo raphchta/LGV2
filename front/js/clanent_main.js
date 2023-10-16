@@ -26,10 +26,15 @@ function $_GET(param) {
     }
         return vars;
   };
+ function getegalite(tabA, tabB) {
+   if (tabA.length !== tabB.length) return false
+
+return tabA.every((value, index) => value === tabB[index])
+}
 document.addEventListener('DOMContentLoaded',function(){
     var code_p = $_GET()["code"];
     var sedo = getCookie('jouer');
-    var ip = "192.168.68.108";
+    var ip = "192.168.19.108";
     const delay = (delayInms) => {
       return new Promise(resolve => setTimeout(resolve, delayInms));
     }
@@ -46,7 +51,7 @@ document.addEventListener('DOMContentLoaded',function(){
     const img_rejouer = document.querySelector(".img_rejouer");
     const bouton_tuer = document.querySelector("#tuer");
     var int_etape = -1;
-    var reserte = 0;
+    var reserte = 1;
     var int_etape_e = -1;
     var if_oppen = 0
     var role = "";
@@ -56,8 +61,8 @@ document.addEventListener('DOMContentLoaded',function(){
     var joure_mort = "";
     var lg = [];
     var list_jouers = [];
-    var roles_avez = [];
-    var jouer_avez = [];
+    var roles_avez = [12];
+    var jouer_avez = [12];
     var couple = [];
     var element = "LOUP GAROU"
     var text = "ws://"+ip+":"+code_p.toString()+"/";
@@ -65,20 +70,9 @@ document.addEventListener('DOMContentLoaded',function(){
     const websocketClient = new WebSocket(text);
     websocketClient.onmessage = function(message){
       const obj = JSON.parse(message.data);
+      console.log(obj);
       int_etape_e = int_etape
       int_etape = obj['eta'];
-      if( typeof obj['presence'] != "undefined"){
-        if(obj['presence'] == 1){
-          element = document.querySelector("body");
-          element.innerHTML = "";
-          const nuwMessage = document.createElement("img");
-          var text = "img/carte/"+role+'.svg';
-          nuwMessage.src=text;
-          nuwMessage.classList.add("img_toto");
-          element.appendChild(nuwMessage);
-
-        }
-      }
       if (int_etape != -1 && int_etape_e ===-1){
         document.querySelector(".changer_roles").style.display = "none";
       }
@@ -114,18 +108,9 @@ document.addEventListener('DOMContentLoaded',function(){
           console.log(e);
         }
       }
-      if( typeof jouers == "undefined"){
-        var jouers = "";}
-      if( typeof roles == "undefined"){
-        var roles = "";}
-      if (reserte == 0  || JSON.stringify(jouer_avez) === JSON.stringify(obj['jouers']) && JSON.stringify(roles_avez) === JSON.stringify(obj['roles'])) {
-        return 0
-      }
-      console.log(JSON.stringify(jouer_avez),JSON.stringify(obj['jouers']));
-      console.log(JSON.stringify(roles_avez),);
       reserte = 0;
-      roles = obj['roles'];
-      jouers = obj['jouers'];
+      var roles = obj['roles'];
+      var jouers = obj['jouers'];
       jouer_avez = obj['jouers'];
       roles_avez = obj['roles'];
       if ((!(jouers.includes(sedo)) && int_etape > 0)){
@@ -137,7 +122,7 @@ document.addEventListener('DOMContentLoaded',function(){
       element.innerHTML = "";
       roles.forEach((item, i) => {
         const nuwMessage = document.createElement("p");
-        nuwMessage.innerHTML = item;
+        nuwMessage.innerText = item;
         nuwMessage.classList.add("role");
         roles_contaner.appendChild(nuwMessage);
         nuwMessage.onclick= function() {
@@ -220,8 +205,10 @@ document.addEventListener('DOMContentLoaded',function(){
         jouers_contaner.appendChild(nuwMessage);
       });
     }
+    console.log("dddddqdsfs");
     const websocketClient_main = new WebSocket("ws://"+ip+":"+code_p.toString()+"/main");
     websocketClient_main.onopen = function(){
+      console.log("main => open");
       websocketClient_main.send(JSON.stringify({"jouer":sedo}));
       bouton_sover.addEventListener('click', function(e){
           dico = {"action":2}
@@ -252,6 +239,19 @@ document.addEventListener('DOMContentLoaded',function(){
           return 0;
         }
         const obj = JSON.parse(message.data);
+        console.log("coucou tu va bien");
+        console.log(obj);
+        if( typeof obj['presence'] != "undefined"){
+          if(obj['presence'] == 1){
+            element = document.querySelector("body");
+            element.innerHTML = "";
+            const nuwMessage = document.createElement("img");
+            var text = "img/carte/"+role+'.svg';
+            nuwMessage.src=text;
+            nuwMessage.classList.add("img_toto");
+            element.appendChild(nuwMessage);
+          }
+        }
         joure_mort_so = obj["mort"]
         joure_mort_if = obj["mort_if"]
         text_mort = document.querySelector(".joure_mort_if");
@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded',function(){
         text_mort.innerHTML = joure_mort_so;
         if( typeof obj["role"] != "undefined" && role != obj["role"]){
           role = obj["role"];
-          reserte = 1;
+          console.log();
           var text = "img/carte/"+role+'.svg';
           document.querySelector(".cart_img").src=text;
         }

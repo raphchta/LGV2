@@ -28,13 +28,6 @@ document.querySelector(".ico_assassin").addEventListener('click', function myFun
     class_de_cart_a = ".img_assassin"
   }
 })
-document.querySelector(".ico_presence").addEventListener('click', function myFunction() {
-  if (class_de_cart_a !=".img_presence"){
-    document.querySelector(class_de_cart_a).classList.remove("active")
-    document.querySelector(".img_presence").classList.add("active")
-    class_de_cart_a = ".img_presence"
-  }
-})
 document.querySelector(".ico_bouffon").addEventListener('click', function myFunction() {
   if (class_de_cart_a !=".img_bouffon"){
   document.querySelector(class_de_cart_a).classList.remove("active");
@@ -211,6 +204,13 @@ if (cart_atuelle =="villageois"){
   }
 }});
 document.querySelector(".crere_par").addEventListener('click', function myFunction() {
+  if (document.querySelector(".presence").checked){
+    dico_roles["presence"]=1
+  }
+  if (document.querySelector(".lome").checked) {
+    dico_roles["prostituée"]=0;
+    dico_roles["prostituee"]=1;
+  }
   fetch('http://127.0.0.1:5000/certe?roles='+encodeURIComponent(JSON.stringify(dico_roles)))
   .then(response => response.json())
   .then(data => {

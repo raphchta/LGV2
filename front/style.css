@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English+SC&display=swap');
 html{
-    width:99;
+    width:99%;
     height:99%;
 }
 body{
@@ -52,6 +52,7 @@ body{
   width:100%;
   border-radius: 10px;
   background-color: #474747;
+  padding-top: 5px;
 }
 .chat{
   height: 100%;
@@ -288,6 +289,13 @@ footer.p{
     scrollbar-width: thin;
     padding-left:5px;
     padding-right:5px;
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 0.5rem;
+    flex-direction: column;
+    margin:0px
+
 }
 .roles{
     padding-top:5px;
@@ -315,6 +323,8 @@ footer.p{
 .persone{
     background-color:#5F5F5F;
     position: relative;
+    margin-top: 0px;
+    margin-bottom: 10px;
 }
 .form_chate{
   display: flex;
@@ -406,12 +416,13 @@ overflow-wrap: break-word;
 .Popup{
     width:100%;
     height:100%;
+    border: 0px;
     background:none;
 }
 .contenair{
     width:100%;
     height:100%;
-    display:flex
+    display: flex;
 }
 .img_partage{
     margin:20px;
@@ -581,15 +592,69 @@ overflow-wrap: break-word;
   height: 99%;
   width: auto;
 }
+.str_di{
+  text-align: center;
+  font-size: 2rem;
+  overflow-wrap: break-word;
+}
+.main_pr{
+  width: 90%;
+  height: 90%;
+}
+
+.role_carte_pr{
+  width:auto;
+  height: 90%;
+}
+.body_pr{
+  display: flex;
+  justify-content: center;
+}
+.div_creer{
+  width: 60%;
+}
+.popup_anonce,.popup_restart{
+  display:flex;
+  justify-content:center;
+  flex-direction:column;
+  align-items: center;
+}
+.popup_restart{
+  width: 30%;
+  height: 50%;
+}
+.mort_popup{
+  font-size: 100%;
+}
+.continunier{
+  background-color: #0F0EAF;
+  padding:5%;
+  font-size: 100%;
+  border-radius: 20px;
+}
+.continunier:hover{
+    transition: 0.5s;
+    box-shadow: 2px 2px 2px gray;
+}
+.boutton-pr{
+  display: block;
+}
 @media(max-width:1000px){
     .main_index{
         flex-direction: column;
+    }
+    .role_carte_pr{
+      width:90%;
+      height: auto;
+    }
+    .str_di{
+      font-size: 3rem;
     }
     .form_role{
         width:100%;
     }
     .main_crere{
-        gap: 1rem;
+        gap: 10vw;
         flex-direction: column;
     }
     .roles{
@@ -597,7 +662,7 @@ overflow-wrap: break-word;
     }
     .div_roles{
         width:95%;
-        height:83%;
+        height:75%;
         background-color:#474747;
         flex-direction: column;
         border-radius: 30px 30px 0px 0px;
@@ -625,7 +690,8 @@ overflow-wrap: break-word;
         align-items:center;
     }
     .body_crere{
-        overflow:auto
+        overflow:auto;
+        height: auto;
     }
     .body_index{
         overflow:auto
@@ -641,6 +707,8 @@ overflow-wrap: break-word;
         gap: 2rem;
         padding:2px;
         justify-content: space-between;
+        display: flex;
+        overflow: auto;
     }
     .header_maind{
         gap: 2rem;
@@ -677,5 +745,55 @@ overflow-wrap: break-word;
     }
     .actife_role_chat{
       display: flex;
+    }
+    .div_creer{
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items:stretch;
+      text-align: center;
+    }
+    .presence{
+      width: 1rem;
+      height: 1rem;
+    }
+    .presence_text{
+      font-size: 1rem;
+    }
+    .affichage_role_choisi{
+      height: 26rem;
+      width:20rem;
+    }
+    .icon{
+      height: 1rem;
+      width: 1rem;
+    }
+    .cart_socrole{
+      margin: 1rem;
+    }
+    .crere_par{
+      margin-bottom: 1rem;
+    }
+    .img_role_caroucle{
+      width: 20rem;
+      height: auto;
+    }
+    .joure_div{
+      min-height: 200px;
+    }
+    .chat{
+      min-height: 300px;
+    }
+    .nave{
+      height: 20%;
+    }
+    .text_nave{
+      font-size: 40px;
+    }
+    .form_chate{
+      height: 40%;
+    }
+    .footer_ind{
+      padding-bottom: 20px;
     }
 }

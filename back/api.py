@@ -3,11 +3,17 @@ from websocket import create_connection
 import json
 from flask_cors import CORS
 import random
-ip = "192.168.68.108"
+ip = "192.168.19.108"
 
 def rechet():#récuper les var du wedsocket
     ws = create_connection("ws://"+ip+":12345/")
     ws.send('$£CONN')
+    retoure = ws.recv()
+    return retoure
+
+def presenciel(code):#récuper les var du wedsocket
+    ws = create_connection("ws://"+ip+":12345/")
+    ws.send(f'$£PRE{code}')
     retoure = ws.recv()
     return retoure
 
@@ -54,8 +60,18 @@ def verife_usser():
         if usser in dico_partis[code_parti]:
             return json.dumps({'reponce':'1'})
         else:
-            return json.dumps({'reponce':'0'})
+            odd =presenciel(code_parti)
+            obj = json.loads(odd)
+            if obj["pr"] == 1:
+                if obj["nara"] == 0:
+                    return json.dumps({'reponce':'0',"url":f"jeus_pr_na.html?code={code_parti}"})
+                else:
+                    return json.dumps({'reponce': '0', "url": f"jeux_pr.html?code={code_parti}"})
+            else:
+                return json.dumps({'reponce': '0',"url": f"page de jeur.html?code={code_parti}"})
     else:
+        print(f"{code_parti=}")
+        print(f"{list(dico_partis.keys())=}")
         return json.dumps({'reponce':'2'})
 
 @app.route('/certe', methods=['get'])#input code:int(code de la partie) rles:liste
