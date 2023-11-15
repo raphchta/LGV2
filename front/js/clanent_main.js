@@ -34,7 +34,7 @@ return tabA.every((value, index) => value === tabB[index])
 document.addEventListener('DOMContentLoaded',function(){
     var code_p = $_GET()["code"];
     var sedo = getCookie('jouer');
-    var ip = "192.168.19.108";
+    var ip = "192.168.150.108";
     const delay = (delayInms) => {
       return new Promise(resolve => setTimeout(resolve, delayInms));
     }

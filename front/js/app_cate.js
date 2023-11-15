@@ -1,3 +1,17 @@
+function $_GET(param) {
+    var vars = {};
+    window.location.href.replace( location.hash, '' ).replace(
+        /[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
+        function( m, key, value ) { // callback
+            vars[key] = value !== undefined ? value : '';
+        })
+
+    if ( param ) {
+        return vars[param] ? vars[param] : null;
+    }
+        return vars;
+  };
+var code_p = $_GET()["code"];
 const items = document.querySelectorAll(".img_role_caroucle")
 const nbSlide = items.length;
 var class_de_cart_a = ".img_assassin"
@@ -215,7 +229,7 @@ document.querySelector(".crere_par").addEventListener('click', function myFuncti
     dico_roles["prostituée"]=0;
     dico_roles["prostituee"]=1;
   }
-  fetch('http://127.0.0.1:5000/certe?roles='+encodeURIComponent(JSON.stringify(dico_roles)))
+  fetch('http://127.0.0.1:5000/changer_role?code='+ encodeURIComponent(code_p)+'&' + 'roles='+encodeURIComponent(JSON.stringify(dico_roles)))
   .then(response => response.json())
   .then(data => {
     if (data['reponce'] ==="0"){
