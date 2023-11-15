@@ -3,7 +3,7 @@ from websocket import create_connection
 import json
 from flask_cors import CORS
 import random
-ip = "192.168.19.108"
+ip = "192.168.150.108"
 
 def rechet():#récuper les var du wedsocket
     ws = create_connection("ws://"+ip+":12345/")
@@ -17,15 +17,15 @@ def presenciel(code):#récuper les var du wedsocket
     retoure = ws.recv()
     return retoure
 
-def criet_resquit(list_roles,code):#input roles : list ,code: int
+def criet_resquit(list_roles,code,event=dict):#input roles : list ,code: int
     ws = create_connection("ws://"+ip+":12345/")
-    dico = {"roles":list_roles, "code":code}
+    dico = {"roles":list_roles, "code":code,"event":event}
     ws.send(f'$£CrIR{json.dumps(dico)}')
     return 0
 
-def changer_resquit(list_roles,code):#input roles : list ,code: int
+def changer_resquit(list_roles,code,event=dict):#input roles : list ,code: int
     ws = create_connection("ws://"+ip+":12345/")
-    dico = {"roles":list_roles, "code":code}
+    dico = {"roles":list_roles, "code":code,"event":event}
     ws.send(f'$£CHarg{json.dumps(dico)}')
     return 0
 
@@ -47,7 +47,11 @@ def changer_role_partie():
     roles = request.args.get('roles')
     print(roles)
     roles = json.loads(roles)
-    return json.dumps({'reponce':changer_resquit(roles,code_parti)})
+    event = {}
+    if "loup_boure" in roles:
+        event["loup_boure"] = roles["loup_boure"]
+        del roles["loup_boure"]
+    return json.dumps({'reponce':changer_resquit(roles,code_parti,event)})
 
 @app.route('/usser', methods=['get'])#input code:int(code de la partie) jouer:str (spedo) vérifi si le spedo est prix
 def verife_usser():
@@ -70,8 +74,6 @@ def verife_usser():
             else:
                 return json.dumps({'reponce': '0',"url": f"page de jeur.html?code={code_parti}"})
     else:
-        print(f"{code_parti=}")
-        print(f"{list(dico_partis.keys())=}")
         return json.dumps({'reponce':'2'})
 
 @app.route('/certe', methods=['get'])#input code:int(code de la partie) rles:liste
@@ -79,13 +81,17 @@ def created():
     roles = request.args.get('roles')
     list_roles = []
     dico_partis = json.loads(rechet())
-
+    event = {}
     for k,y in json.loads(roles).items():
+        if "loup_boure" == k:
+            event["loup_boure"] = y
+            continue
         if y != 0:
             i = 0
             while i < y:
                 list_roles.append(k)
                 i += 1
+
     code = int
     while True:
         code = random.randint(0, 65535)
@@ -93,7 +99,7 @@ def created():
             break
     if len(list_roles) == 0:
         return json.dumps({'reponce':'1'})
-    criet_resquit(list_roles,code)
+    criet_resquit(list_roles,code,event)
     return json.dumps({'reponce':'0',"code":code})
 
 app.run(host="127.0.0.1")

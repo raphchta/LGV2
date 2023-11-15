@@ -30,7 +30,7 @@ function $_GET(param) {
       var code_p = $_GET()["code"];
       var sedo = getCookie('jouer');
       var role= [];
-      var ip = "192.168.19.108";
+      var ip = "192.168.150.108";
       var text = "ws://"+ip+":"+code_p.toString()+"/cart";
       console.log(text);
       const websocketClient = new WebSocket(text);

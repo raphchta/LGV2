@@ -58,7 +58,7 @@ function $_GET(param) {
     var sorciere_ouver = 0;
     var code_p = $_GET()["code"];
     var sedo = getCookie('jouer');
-    var ip = "192.168.19.108";
+    var ip = "192.168.150.108";
     var text ="ws://"+ip+":"+code_p.toString()+"/narateur";
     var reserte = 1;
     var jouer_avez= [];
