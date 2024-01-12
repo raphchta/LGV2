@@ -15,18 +15,17 @@ function getCookie(cname) {
   return "";
 };
 document.addEventListener('DOMContentLoaded',function(){
-    var ip = "192.168.150.108";
-    console.log($_GET());
+    var ip = "91.234.195";
     if( typeof $_GET()["code"] == "undefined"){
         document.location.href = 'code.html'
     }else{
         var code_p = $_GET()["code"];
         console.log(code_p);
     }
-    fetch('http://127.0.0.1:5000/code?code=' + code_p)
+    fetch('http://91.234.195:8000/code?code=' + code_p)
     .then(response => response.json())
     .then(data => {
-    console.log(data['reponce'])
+    data =JSON.parse(data);
     if (data['reponce'] ==="1"){
         document.location.href = 'code.html'
     }})
@@ -36,64 +35,7 @@ document.addEventListener('DOMContentLoaded',function(){
         var sedo = getCookie('jouer')
         console.log(sedo);
     }
-
-    var websocketClient = new WebSocket("ws://"+ip+":12345/");
-
-    const messagescontaner = document.querySelector("#message_container")
-    const sendMessageButton = document.querySelector(".bontton-message")
-    element = document.getElementById('message_container');//message_container
-    websocketClient.onopen = function(){
-      document.querySelector(".rejoure").addEventListener('click', function(e){
-        websocketClient.send("/re");
-        document.querySelector(".rejoure").style.display = "none";
-      });
-      document.querySelector(".changer_roles").addEventListener('click', function(e){
-        document.querySelector(".changer_roles").style.display = "none";
-      });
-      function seed_message_chat(){
-        var stl = messageInput.value
-        websocketClient.send(stl);
-      }
-        var dict = new Object();
-        var dict = {
-            "code": code_p,
-            "jouer": sedo
-        };
-        websocketClient.send(JSON.stringify(dict));
-        sendMessageButton.onclick =function(){
-            seed_message_chat();
-        };
-        websocketClient.onmessage = function(messages){
-            if (messages.data === "re"){
-              document.querySelector(".temps_text").style.display = "none";
-              document.querySelector(".rejoure").style.display = "block";
-              return 0;
-            }
-            if (messages.data === "re1"){
-              document.querySelector(".changer_roles").href ="./changer.html?code=" + encodeURIComponent(code_p);
-              document.querySelector(".changer_roles").style.display = "block";
-              return 0
-            }
-            if (messages.data === '{"message": "la patri a comencer", "envoyer": "le narrateur", "styl": ""}'){
-              document.querySelector(".changer_roles").style.display = "none";
-              var websocketClient = new WebSocket("ws://"+ip+":12345/");
-            }
-            const nuwMessage = document.createElement("p");
-            const obj = JSON.parse(messages.data);
-            message = obj["message"]
-            envoyer = obj["envoyer"]
-            styl = obj["styl"]
-            nuwMessage.innerHTML = '<span class="envoyer">' +envoyer +"</span>:" + message;
-            nuwMessage.classList.add("message");
-            if (styl !== ""){
-                nuwMessage.classList.add(styl);
-            }
-            messagescontaner.appendChild(nuwMessage);
-            element.scrollTop = element.scrollHeight;
-        }
-
-    }
-},false);
+});
 function handleKeyPress_for_seed_messaage(event) {
       if (event.keyCode === 13) {
         event.preventDefault();

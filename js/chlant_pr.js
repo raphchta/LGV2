@@ -30,14 +30,11 @@ function $_GET(param) {
       var code_p = $_GET()["code"];
       var sedo = getCookie('jouer');
       var role= [];
-      var ip = "192.168.150.108";
-      var text = "ws://"+ip+":"+code_p.toString()+"/cart";
+      var ip = "91.234.195";
+      var text ="ws://"+ip+":8000/cart/"+code_p.toString()+"/"+sedo.toString();
       console.log(text);
       const websocketClient = new WebSocket(text);
-      websocketClient.onopen = function(){
-      websocketClient.send(JSON.stringify({"jouer":sedo}));}
       websocketClient.onmessage = function(message){
-        console.log(message.data);
         const obj = JSON.parse(message.data);
         if( typeof obj["role"] != "undefined" && role != obj["role"]){
           role = obj["role"];

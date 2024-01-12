@@ -58,8 +58,8 @@ function $_GET(param) {
     var sorciere_ouver = 0;
     var code_p = $_GET()["code"];
     var sedo = getCookie('jouer');
-    var ip = "192.168.150.108";
-    var text ="ws://"+ip+":"+code_p.toString()+"/narateur";
+    var ip = "127.0.0.1";
+    var text ="ws://"+ip+":8000/narateur/"+code_p.toString()+"/"+sedo.toString();
     var reserte = 1;
     var jouer_avez= [];
     document.querySelector(".changer_comp").addEventListener('click', function(e){
@@ -67,7 +67,6 @@ function $_GET(param) {
     });
     const websocketClient = new WebSocket(text);
     websocketClient.onopen = function(){
-    websocketClient.send(JSON.stringify({"jouer":sedo}));
     document.querySelector(".rejoure").addEventListener('click', function(e){
       websocketClient.send("/re");
       document.querySelector(".restart").close("animalNotChosen");
@@ -93,10 +92,9 @@ function $_GET(param) {
       }
       websocketClient.send("");
     }
-  var text2 ="ws://"+ip+":"+code_p.toString()+"/";
+  var text2 ="ws://"+ip+":8000/narateur$code="+code_p.toString();
   const websocketClient_main = new WebSocket(text2);
   websocketClient_main.onmessage = function(message){
-
     const obj = JSON.parse(message.data);
     console.log(obj);
     int_etape_e = int_etape

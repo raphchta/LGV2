@@ -29,10 +29,10 @@ function handleKeyPress_fon_id(event) {
       }
 }
 function verif_id(){
-  fetch('http://127.0.0.1:5000/usser?code=' + code_p + '&usser=' + input_text.value)
+  fetch('http://91.234.195:8000/usser?code=' + code_p + '&usser=' + input_text.value)
   .then(response => response.json())
   .then(data => {
-    console.log(data);
+    data =JSON.parse(data);
     if (data['reponce'] ==="0"){
         document.cookie = "jouer=" + input_text.value+";";
         document.location.href = data['url'];

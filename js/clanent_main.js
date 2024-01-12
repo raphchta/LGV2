@@ -13,6 +13,12 @@ function getCookie(cname) {
   }
   return "";
 };
+function handleKeyPress_for_seed_messaage(event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        seed_message_chat();
+      }
+}
 function $_GET(param) {
     var vars = {};
     window.location.href.replace( location.hash, '' ).replace(
@@ -34,7 +40,7 @@ return tabA.every((value, index) => value === tabB[index])
 document.addEventListener('DOMContentLoaded',function(){
     var code_p = $_GET()["code"];
     var sedo = getCookie('jouer');
-    var ip = "192.168.150.108";
+    var ip = "91.234.195";
     const delay = (delayInms) => {
       return new Promise(resolve => setTimeout(resolve, delayInms));
     }
@@ -45,11 +51,12 @@ document.addEventListener('DOMContentLoaded',function(){
     const dialog_rejouer= document.querySelector(".dialog_rejouer");
     const text_time= document.querySelector(".temps_text");
     const dialog_if= document.querySelector(".dialog-in");
-    const messagescontaner = document.querySelector("#message_container")
     const bouton_sover = document.querySelector("#sauver");
     const bouton_rien = document.querySelector("#rien");
     const img_rejouer = document.querySelector(".img_rejouer");
     const bouton_tuer = document.querySelector("#tuer");
+    const messagescontaner = document.querySelector("#message_container")
+    const sendMessageButton = document.querySelector(".bontton-message")
     var int_etape = -1;
     var reserte = 1;
     var int_etape_e = -1;
@@ -65,7 +72,7 @@ document.addEventListener('DOMContentLoaded',function(){
     var jouer_avez = [12];
     var couple = [];
     var element = "LOUP GAROU"
-    var text = "ws://"+ip+":"+code_p.toString()+"/";
+    var text ="ws://"+ip+":8000/"+code_p.toString();
     console.log(text);
     const websocketClient = new WebSocket(text);
     websocketClient.onmessage = function(message){
@@ -205,16 +212,28 @@ document.addEventListener('DOMContentLoaded',function(){
         jouers_contaner.appendChild(nuwMessage);
       });
     }
-    console.log("dddddqdsfs");
-    const websocketClient_main = new WebSocket("ws://"+ip+":"+code_p.toString()+"/main");
+    const websocketClient_main = new WebSocket("ws://"+ip+":8000/main/"+code_p.toString()+"/"+sedo.toString());
     websocketClient_main.onopen = function(){
-      console.log("main => open");
-      websocketClient_main.send(JSON.stringify({"jouer":sedo}));
-      bouton_sover.addEventListener('click', function(e){
-          dico = {"action":2}
-          websocketClient_main.send(JSON.stringify(dico));
-          dialog_sor.close("animalNotChosen");
+        bouton_sover.addEventListener('click', function(e){
+        dico = {"action":2}
+        websocketClient_main.send(JSON.stringify(dico));
+        dialog_sor.close("animalNotChosen");
       });
+      document.querySelector(".rejoure").addEventListener('click', function(e){
+          websocketClient_main.send("/re");
+          document.querySelector(".rejoure").style.display = "none";
+      });
+      document.querySelector(".changer_roles").addEventListener('click', function(e){
+        document.querySelector(".changer_roles").style.display = "none";
+      });
+      function seed_message_chat(){
+        var stl = messageInput.value
+        dddd = {"message":stl}
+        websocketClient_main.send(JSON.stringify(dddd));
+      }
+      sendMessageButton.onclick =function(){
+          seed_message_chat();
+      };
       document.querySelector(".inf").addEventListener('click', function(e){
           dico = {"action":1}
           websocketClient_main.send(JSON.stringify(dico));
@@ -238,9 +257,34 @@ document.addEventListener('DOMContentLoaded',function(){
         if (message.data == "ops"){
           return 0;
         }
+        if (message.data === "re"){
+          document.querySelector(".temps_text").style.display = "none";
+          document.querySelector(".rejoure").style.display = "block";
+          return 0;
+        }
+        if (message.data === "re1"){
+          document.querySelector(".changer_roles").href ="./changer.html?code=" + encodeURIComponent(code_p);
+          document.querySelector(".changer_roles").style.display = "block";
+          return 0
+        }
+        if (message.data === '{"message": "la patri a comencer", "envoyer": "le narrateur", "styl": ""}'){
+          document.querySelector(".changer_roles").style.display = "none";
+        }
         const obj = JSON.parse(message.data);
-        console.log("coucou tu va bien");
-        console.log(obj);
+        if ( typeof obj['message'] != "undefined" &&  typeof obj['envoyer'] != "undefined" && typeof obj['styl'] != "undefined"){
+          const nuwMessage = document.createElement("p");
+          const obj = JSON.parse(message.data);
+          message = obj["message"]
+          envoyer = obj["envoyer"]
+          styl = obj["styl"]
+          nuwMessage.innerHTML = '<span class="envoyer">' +envoyer +"</span>:" + message;
+          nuwMessage.classList.add("message");
+          if (styl !== ""){
+              nuwMessage.classList.add(styl);
+          }
+          messagescontaner.appendChild(nuwMessage);
+          element.scrollTop = element.scrollHeight;
+        }
         if( typeof obj['presence'] != "undefined"){
           if(obj['presence'] == 1){
             element = document.querySelector("body");
@@ -283,7 +327,7 @@ document.addEventListener('DOMContentLoaded',function(){
         text_mort.innerHTML = joure_mort_so;
         if( typeof obj["role"] != "undefined" && role != obj["role"]){
           role = obj["role"];
-          console.log();
+          console.log(role);
           var text = "img/carte/"+role+'.svg';
           document.querySelector(".cart_img").src=text;
         }

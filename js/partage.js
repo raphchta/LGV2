@@ -37,7 +37,7 @@ if($_GET()["code"] = undefined){
     text_code.innerHTML = code_p
     console.log(code_p);
 }
-const url_partager = "file:///C:/Users/Rapha%C3%ABl/Documents/code/html/LGV2/indentifent.html?code="+code_p;
+const url_partager = "https://loup-garou.online/indentifent.html?code="+code_p;
 updateButton.addEventListener('click', function(e){
     dialog.showModal();
 });

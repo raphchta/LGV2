@@ -11,9 +11,10 @@ function handleKeyPress(event) {
       }
 }
 function verif_code(){
-  fetch('http://127.0.0.1:5000/code?code=' + input_text.value)
+  fetch('http://91.234.195:8000/code?code=' + input_text.value)
   .then(response => response.json())
   .then(data => {
+    data =JSON.parse(data);
     if (data['reponce'] ==="0"){
         document.location.href = 'indentifent.html?code=' + input_text.value;
     } else{

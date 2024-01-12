@@ -215,10 +215,15 @@ document.querySelector(".crere_par").addEventListener('click', function myFuncti
     dico_roles["prostituée"]=0;
     dico_roles["prostituee"]=1;
   }
-  fetch('http://127.0.0.1:5000/certe?roles='+encodeURIComponent(JSON.stringify(dico_roles)))
+  fetch('http://91.234.195:8000/certe?roles='+encodeURIComponent(JSON.stringify(dico_roles)),{
+    type: 'GET',
+    mode: "cors",
+
+  })
   .then(response => response.json())
   .then(data => {
-    if (data['reponce'] ==="0"){
-      document.location.href ="./indentifent.html?code=" + encodeURIComponent(data["code"]);
+    data =JSON.parse(data);
+    if (data["reponce"] ==="0"){
+      document.location.href = "indentifent.html?code=" + encodeURIComponent(data["code"]);
   }})
 })
