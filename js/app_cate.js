@@ -229,7 +229,8 @@ document.querySelector(".crere_par").addEventListener('click', function myFuncti
     dico_roles["prostituée"]=0;
     dico_roles["prostituee"]=1;
   }
-  fetch('http://91.234.195:8000/changer_role?code='+ encodeURIComponent(code_p)+'&' + 'roles='+encodeURIComponent(JSON.stringify(dico_roles)))
+  var ip= 'api.loup-garou.online';
+  fetch('https://'+ip+':8000/changer_role?code='+ encodeURIComponent(code_p)+'&' + 'roles='+encodeURIComponent(JSON.stringify(dico_roles)))
   .then(response => response.json())
   .then(data => {
     data =JSON.parse(data);

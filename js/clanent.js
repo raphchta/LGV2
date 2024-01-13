@@ -15,14 +15,14 @@ function getCookie(cname) {
   return "";
 };
 document.addEventListener('DOMContentLoaded',function(){
-    var ip = "91.234.195";
+    var ip = "api.loup-garou.online";
     if( typeof $_GET()["code"] == "undefined"){
         document.location.href = 'code.html'
     }else{
         var code_p = $_GET()["code"];
         console.log(code_p);
     }
-    fetch('http://91.234.195:8000/code?code=' + code_p)
+    fetch('https://'+ip+':8000/code?code=' + code_p)
     .then(response => response.json())
     .then(data => {
     data =JSON.parse(data);

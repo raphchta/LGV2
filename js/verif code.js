@@ -11,7 +11,8 @@ function handleKeyPress(event) {
       }
 }
 function verif_code(){
-  fetch('http://91.234.195:8000/code?code=' + input_text.value)
+  var ip = "api.loup-garou.online";
+  fetch('https://'+ip+':8000/code?code=' + input_text.value)
   .then(response => response.json())
   .then(data => {
     data =JSON.parse(data);

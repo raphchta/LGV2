@@ -40,7 +40,7 @@ return tabA.every((value, index) => value === tabB[index])
 document.addEventListener('DOMContentLoaded',function(){
     var code_p = $_GET()["code"];
     var sedo = getCookie('jouer');
-    var ip = "91.234.195";
+    var ip = "api.loup-garou.online";
     const delay = (delayInms) => {
       return new Promise(resolve => setTimeout(resolve, delayInms));
     }

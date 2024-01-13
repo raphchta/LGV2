@@ -29,7 +29,8 @@ function handleKeyPress_fon_id(event) {
       }
 }
 function verif_id(){
-  fetch('http://91.234.195:8000/usser?code=' + code_p + '&usser=' + input_text.value)
+  var ip= 'api.loup-garou.online';
+  fetch('https://'+ip+':8000/usser?code=' + code_p + '&usser=' + input_text.value)
   .then(response => response.json())
   .then(data => {
     data =JSON.parse(data);
